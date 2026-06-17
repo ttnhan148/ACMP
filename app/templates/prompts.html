@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+
+{% block title %}Prompt Library{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-extrabold text-white">Prompt Library</h2>
+            <p class="text-sm text-slate-400 mt-1">Store and customize structured prompts to feed into AI assistants.</p>
+        </div>
+        <a href="/prompts/new" class="btn-gold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
+            <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i>
+            New Template
+        </a>
+    </div>
+
+    <!-- Category Filtering Tabs -->
+    {% set categories = ["research", "script", "visual", "seo", "compliance", "analysis", "system", "general"] %}
+    <div class="flex flex-wrap items-center gap-2 border-b border-white/5 pb-5">
+        <a href="/prompts" class="px-4 py-2 rounded-xl text-xs font-bold transition-all border 
+                                {% if not category_filter %}bg-gold-500/10 border-gold-500/20 text-gold-500
+                                {% else %}border-white/5 bg-[#0d121e]/40 text-slate-400 hover:text-white{% endif %}">
+            All Categories
+        </a>
+        {% for cat in categories %}
+        <a href="/prompts?category={{ cat }}" class="px-4 py-2 rounded-xl text-xs font-bold transition-all border 
+                                                   {% if category_filter == cat %}bg-gold-500/10 border-gold-500/20 text-gold-500
+                                                   {% else %}border-white/5 bg-[#0d121e]/40 text-slate-400 hover:text-white{% endif %}">
+            {{ cat | capitalize }}
+        </a>
+        {% endfor %}
+    </div>
+
+    <!-- Prompts List -->
+    {% if prompts %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for p in prompts %}
+        <div class="glass-card p-6 rounded-2xl flex flex-col justify-between border border-white/5 group relative">
+            <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] bg-slate-800 text-slate-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                        {{ p.category | capitalize }}
+                    </span>
+                    <span class="text-[10px] text-slate-500 font-semibold">Used {{ p.usage_count }} times</span>
+                </div>
+                
+                <h3 class="text-base font-bold text-white group-hover:text-gold-500 transition-colors">
+                    <a href="/prompts/{{ p.id }}">{{ p.name }}</a>
+                </h3>
+                
+                <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">{{ p.description }}</p>
+                
+                {% if p.variables %}
+                <div class="flex flex-wrap gap-1.5 pt-2">
+                    {% for var in p.variables %}
+                    <span class="text-[9px] bg-slate-900/60 border border-white/5 text-slate-500 font-mono font-bold px-1.5 py-0.5 rounded-md">
+                        {{ var }}
+                    </span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Footer Details & Buttons -->
+            <div class="flex items-center justify-between mt-6 pt-4 border-t border-white/5 text-xs text-slate-500">
+                <span>Variables: {{ p.variables | length }} total</span>
+                <div class="flex items-center gap-1.5">
+                    <a href="/prompts/{{ p.id }}/edit" class="p-2 text-slate-500 hover:text-white rounded-lg hover:bg-white/[0.02] transition-colors" title="Edit Template">
+                        <i data-lucide="edit-3" class="h-4.5 w-4.5"></i>
+                    </a>
+                    <button hx-delete="/prompts/{{ p.id }}" hx-confirm="Are you sure you want to delete this prompt template?"
+                            class="p-2 text-slate-500 hover:text-red-400 rounded-lg hover:bg-white/[0.02] transition-colors" title="Delete Template">
+                        <i data-lucide="trash-2" class="h-4.5 w-4.5"></i>
+                    </button>
+                    <a href="/prompts/{{ p.id }}" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1">
+                        Use Template
+                        <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="glass-card p-12 rounded-2xl border border-white/5 text-center text-slate-500 space-y-4 max-w-md mx-auto mt-12">
+        <div class="h-14 w-14 rounded-2xl bg-slate-800/40 border border-slate-700 flex items-center justify-center mx-auto">
+            <i data-lucide="terminal" class="h-7 w-7 text-slate-500"></i>
+        </div>
+        <div class="space-y-1">
+            <h3 class="text-white font-bold text-base">Prompt Library empty</h3>
+            <p class="text-xs text-slate-400">Add system instructions or content templates.</p>
+        </div>
+        <a href="/prompts/new" class="btn-gold px-5 py-2.5 rounded-xl text-xs font-bold inline-flex items-center gap-1">
+            <i data-lucide="plus" class="h-4 w-4"></i>
+            Create Template
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

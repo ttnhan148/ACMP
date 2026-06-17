@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block title %}ACMP Solo Dashboard{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Header with Action -->
+    <div class="flex items-center justify-between">
+        <div>
+            <h2 class="text-3xl font-extrabold text-white">Creator Hub</h2>
+            <p class="text-sm text-slate-400 mt-1">Manage your channel performance and production pipeline.</p>
+        </div>
+        <a href="/projects/new" class="btn-gold px-5 py-2.5 rounded-xl text-sm flex items-center gap-2">
+            <i data-lucide="plus-circle" class="h-4.5 w-4.5"></i>
+            New Project
+        </a>
+    </div>
+
+    <!-- Summary Statistics Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-5">
+        <!-- Videos Count -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <span class="text-xs text-slate-500 font-semibold tracking-wider uppercase">Active Videos</span>
+            <div class="flex items-baseline gap-2 mt-4">
+                <span class="text-3xl font-extrabold text-white">{{ summary.active_videos }}</span>
+                <span class="text-xs text-slate-400">published</span>
+            </div>
+        </div>
+        <!-- Views -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <span class="text-xs text-slate-500 font-semibold tracking-wider uppercase">Total Views</span>
+            <div class="flex items-baseline gap-2 mt-4">
+                <span class="text-3xl font-extrabold text-white">{{ summary.total_views | format_views }}</span>
+                <span class="text-xs text-green-500 font-medium">▲ 14%</span>
+            </div>
+        </div>
+        <!-- Average CTR -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <span class="text-xs text-slate-500 font-semibold tracking-wider uppercase">Average CTR</span>
+            <div class="flex items-baseline gap-2 mt-4">
+                <span class="text-3xl font-extrabold text-white">{{ "%.1f" | format(summary.avg_ctr) }}%</span>
+                <span class="text-xs text-slate-400">target: >5%</span>
+            </div>
+        </div>
+        <!-- Subscribers Gained -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <span class="text-xs text-slate-500 font-semibold tracking-wider uppercase">New Subscribers</span>
+            <div class="flex items-baseline gap-2 mt-4">
+                <span class="text-3xl font-extrabold text-white">+{{ summary.total_subs | format_views }}</span>
+                <span class="text-xs text-slate-400">fans</span>
+            </div>
+        </div>
+        <!-- Revenue -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+            <span class="text-xs text-slate-500 font-semibold tracking-wider uppercase">Total Revenue</span>
+            <div class="flex items-baseline gap-2 mt-4">
+                <span class="text-3xl font-extrabold text-gold-500">{{ summary.total_revenue | format_currency }}</span>
+                <span class="text-xs text-green-500 font-medium">▲ 22%</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Workspace Split -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left: Recent Projects & Actions (Cols 1 & 2) -->
+        <div class="lg:col-span-2 space-y-8">
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex items-center justify-between mb-6">
+                    <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                        <i data-lucide="clock" class="h-5 w-5 text-gold-500"></i>
+                        Recent Production Timelines
+                    </h3>
+                    <a href="/projects" class="text-xs text-gold-500 font-semibold hover:underline">View All Projects</a>
+                </div>
+                
+                {% if recent_projects %}
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-white/5 text-slate-500 text-xs font-semibold uppercase">
+                                <th class="pb-3 w-1/2">Project Details</th>
+                                <th class="pb-3">Status</th>
+                                <th class="pb-3 w-1/3">Pipeline Progress</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            {% for p in recent_projects %}
+                            <tr class="group hover:bg-white/[0.01]">
+                                <td class="py-4 pr-4">
+                                    <a href="/projects/{{ p.id }}" class="block">
+                                        <h4 class="text-sm font-bold text-white group-hover:text-gold-500 transition-colors">{{ p.title }}</h4>
+                                        <p class="text-xs text-slate-500 mt-0.5 truncate w-64 md:w-80">Topic: {{ p.topic }} • Niche: {{ p.niche | capitalize }}</p>
+                                    </a>
+                                </td>
+                                <td class="py-4">
+                                    {% if p.status == 'published' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-green-500/10 text-green-500">
+                                            <span class="h-1 w-1 rounded-full bg-green-500"></span> Published
+                                        </span>
+                                    {% elif p.status == 'completed' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-gold-500/10 text-gold-500">
+                                            <span class="h-1 w-1 rounded-full bg-gold-500"></span> Assembled
+                                        </span>
+                                    {% elif p.status == 'in_progress' %}
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-500/10 text-blue-500">
+                                            <span class="h-1 w-1 rounded-full bg-blue-500 animate-pulse"></span> Production
+                                        </span>
+                                    {% else %}
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-bold bg-slate-500/10 text-slate-400">
+                                            <span class="h-1 w-1 rounded-full bg-slate-500"></span> Draft
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td class="py-4">
+                                    <div class="flex items-center gap-3">
+                                        <div class="flex-1 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                                            <div class="h-full bg-gradient-to-r from-gold-500 to-amber-500 rounded-full" style="width: {{ p.progress_pct }}%"></div>
+                                        </div>
+                                        <span class="text-xs text-slate-400 font-bold whitespace-nowrap">{{ p.completed_steps }}/{{ p.total_steps }} steps</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="py-12 text-center text-slate-500 space-y-3">
+                    <i data-lucide="folder-open" class="h-10 w-10 mx-auto text-slate-600"></i>
+                    <p class="text-sm">No video projects created yet.</p>
+                    <a href="/projects/new" class="text-xs text-gold-500 font-semibold hover:underline">Create your first project</a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Side: Platform Trends (Col 3) -->
+        <div class="space-y-8">
+            <!-- Active Tasks Tracker (polls active status) -->
+            <div id="active-task-container" 
+                 hx-get="/projects/0/tasks/active" 
+                 hx-trigger="load, every 3s" 
+                 hx-swap="outerHTML">
+                <!-- If any task is running across the system, it will mount progress tracking here -->
+            </div>
+
+            <!-- Trending Topics Box -->
+            <div class="glass-card p-6 rounded-2xl border border-gold-500/10 bg-gradient-to-b from-[#111625]/80 to-[#0c0f18]/80">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                        <i data-lucide="flame" class="h-4.5 w-4.5 text-gold-500 fill-gold-500/20"></i>
+                        Hot Platform Trends ({{ niche | capitalize }})
+                    </h3>
+                    <i data-lucide="info" class="h-4 w-4 text-slate-600" title="Based on active niche popular uploads"></i>
+                </div>
+                
+                <div class="space-y-4">
+                    {% for trend in trending_topics %}
+                    <div class="p-3 bg-white/[0.02] border border-white/5 rounded-xl hover:border-gold-500/20 transition-all flex flex-col gap-1.5">
+                        <h4 class="text-xs font-bold text-slate-200 line-clamp-2 leading-snug">{{ trend.title }}</h4>
+                        <div class="flex items-center justify-between text-[10px] text-slate-500">
+                            <span>{{ trend.channel }}</span>
+                            <span class="font-semibold text-slate-400">{{ trend.views | format_views }} views</span>
+                        </div>
+                        <div class="flex items-center justify-between mt-1 pt-1.5 border-t border-white/5">
+                            <a href="{{ trend.url }}" target="_blank" class="text-[10px] text-slate-500 hover:text-white flex items-center gap-1">
+                                <i data-lucide="external-link" class="h-3 w-3"></i> View Source
+                            </a>
+                            <!-- Create from Topic Form -->
+                            <form action="/projects" method="POST" class="inline">
+                                <input type="hidden" name="title" value="{{ trend.title | truncate(50) }}">
+                                <input type="hidden" name="topic" value="{{ trend.title }}">
+                                <input type="hidden" name="niche" value="{{ niche }}">
+                                <button type="submit" class="text-[10px] text-gold-500 hover:text-amber-400 font-bold flex items-center gap-0.5">
+                                    <i data-lucide="plus" class="h-3 w-3"></i> Start Project
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

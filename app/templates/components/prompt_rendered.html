@@ -1,0 +1,22 @@
+<div class="space-y-3 pt-4 border-t border-white/5 animate-fade-in" id="rendered-prompt-box">
+    <div class="flex items-center justify-between">
+        <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+            <i data-lucide="check-square" class="h-4 w-4 text-green-500"></i>
+            Rendered Prompt Output
+        </h4>
+        <button onclick="copyRenderedText()" class="text-xs text-gold-500 hover:text-amber-400 font-bold flex items-center gap-1">
+            <i data-lucide="copy" class="h-3.5 w-3.5"></i>
+            Copy Rendered Text
+        </button>
+    </div>
+    
+    <pre id="rendered-prompt-output-text" class="text-xs text-slate-300 font-mono bg-black/40 p-4 rounded-xl border border-white/5 overflow-x-auto whitespace-pre-wrap max-h-96 scrollbar-thin select-all">{{ rendered_text }}</pre>
+</div>
+
+<script>
+    function copyRenderedText() {
+        const text = document.getElementById("rendered-prompt-output-text").innerText;
+        navigator.clipboard.writeText(text);
+        alert("Rendered prompt text successfully copied to clipboard!");
+    }
+</script>

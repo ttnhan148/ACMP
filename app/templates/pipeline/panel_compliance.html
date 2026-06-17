@@ -1,0 +1,139 @@
+<div class="space-y-6">
+    <!-- Step Header -->
+    <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+            <span class="text-[10px] text-gold-500 font-bold uppercase tracking-widest">Step 9</span>
+            <h3 class="text-xl font-bold text-white">Compliance Review</h3>
+        </div>
+        <div>
+            {% if step.status == 'done' %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Completed
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span> Audit Pending
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Step Work Area -->
+    <div class="space-y-6">
+        <!-- resolved prompt box -->
+        {% if prompt %}
+        {% set resolved_prompt = prompt.template_text
+            .replace("[TOPIC]", project.topic)
+            .replace("[SCRIPT]", "[SCRIPT TEXT LOADED FROM FILE]") %}
+            
+        <div class="border border-gold-500/10 bg-[#111726]/40 p-5 rounded-2xl space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sparkles" class="h-4 w-4 text-gold-500"></i>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Compliance Auditor Prompt (P-07)</h4>
+                </div>
+                <button onclick="copyCompliancePrompt()" class="text-xs text-gold-500 hover:text-amber-400 font-bold flex items-center gap-1">
+                    <i data-lucide="copy" class="h-3.5 w-3.5"></i>
+                    Copy Resolved Prompt
+                </button>
+            </div>
+            
+            <pre id="resolved-compliance-prompt" class="text-[11px] text-slate-400 font-mono bg-black/20 p-4 rounded-xl border border-white/5 overflow-x-auto whitespace-pre-wrap max-h-48 scrollbar-thin">{{ resolved_prompt }}</pre>
+            <p class="text-[10px] text-slate-500">Copy this prompt, append your script, and verify policy compliance using Claude to avoid demonetization warnings.</p>
+        </div>
+        {% endif %}
+
+        <!-- Checklist Form -->
+        <div class="glass-card p-6 rounded-2xl border border-white/5 bg-[#0d121e]/30">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider mb-5">Interactive Compliance Scorecard</h4>
+
+            <form hx-post="/projects/{{ project.id }}/steps/compliance/check" 
+                  hx-target="#pipeline-steps-list"
+                  class="space-y-5">
+                
+                <!-- copyright -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pb-4 border-b border-white/5">
+                    <div class="md:col-span-3">
+                        <h5 class="text-sm font-bold text-white">Copyright & Asset Safety</h5>
+                        <p class="text-xs text-slate-400 mt-0.5">Ensure images, voice tracks, and clip segments do not violate third-party trademarks or copyrights.</p>
+                    </div>
+                    <select name="copyright_chk" class="bg-[#07090e] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                        <option value="pending">Pending</option>
+                        <option value="pass" selected>Pass (Clean)</option>
+                        <option value="warning">Warning (Check)</option>
+                    </select>
+                </div>
+
+                <!-- policies -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pb-4 border-b border-white/5">
+                    <div class="md:col-span-3">
+                        <h5 class="text-sm font-bold text-white">YouTube Content Policies</h5>
+                        <p class="text-xs text-slate-400 mt-0.5">Validate script contents against hate speech, graphic violence, sensationalism, or misleading details.</p>
+                    </div>
+                    <select name="policy_chk" class="bg-[#07090e] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                        <option value="pending">Pending</option>
+                        <option value="pass" selected>Pass (Clean)</option>
+                        <option value="warning">Warning (Check)</option>
+                    </select>
+                </div>
+
+                <!-- transform -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pb-4 border-b border-white/5">
+                    <div class="md:col-span-3">
+                        <h5 class="text-sm font-bold text-white">AI Transformation Check</h5>
+                        <p class="text-xs text-slate-400 mt-0.5">Check script originality. Ensure voice expressions and content feel unique, preventing 'Reused Content' flags.</p>
+                    </div>
+                    <select name="originality_chk" class="bg-[#07090e] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                        <option value="pending">Pending</option>
+                        <option value="pass" selected>Pass (Clean)</option>
+                        <option value="warning">Warning (Check)</option>
+                    </select>
+                </div>
+
+                <!-- safety -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-center pb-4 border-b border-white/5">
+                    <div class="md:col-span-3">
+                        <h5 class="text-sm font-bold text-white">Advertiser & Brand Safety</h5>
+                        <p class="text-xs text-slate-400 mt-0.5">Assess whether mainstream advertisers are comfortable running ads next to this video topic.</p>
+                    </div>
+                    <select name="safety_chk" class="bg-[#07090e] border border-white/5 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-gold-500">
+                        <option value="pending">Pending</option>
+                        <option value="pass" selected>Pass (Clean)</option>
+                        <option value="warning">Warning (Check)</option>
+                    </select>
+                </div>
+
+                <!-- submit -->
+                <div class="flex justify-between items-center pt-4">
+                    <button type="button" hx-post="/projects/{{ project.id }}/steps/compliance/status" hx-vals='{"status": "skipped", "notes": "Compliance skipped."}' hx-target="#pipeline-steps-list" class="text-xs font-semibold text-slate-500 hover:text-slate-300">
+                        Skip Step
+                    </button>
+                    <button type="submit" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+                        <i data-lucide="shield-check" class="h-4 w-4 text-slate-900"></i>
+                        Record Compliance Verdict
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-between items-center pt-6 border-t border-white/5 mt-8">
+        <span class="text-xs text-slate-500"></span>
+        {% if step.status == 'done' %}
+        <button onclick="loadStepWorkspace('publish')" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+            Proceed to Publish
+            <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function copyCompliancePrompt() {
+        const promptText = document.getElementById("resolved-compliance-prompt").innerText;
+        navigator.clipboard.writeText(promptText);
+        alert("Compliance Prompt copied to clipboard!");
+    }
+</script>

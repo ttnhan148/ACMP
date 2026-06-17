@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block title %}Create New Video Project{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    <div class="flex items-center gap-2 text-sm text-slate-500">
+        <a href="/dashboard" class="hover:text-white">Dashboard</a>
+        <span>/</span>
+        <a href="/projects" class="hover:text-white">Projects</a>
+        <span>/</span>
+        <span class="text-slate-300">New Project</span>
+    </div>
+    
+    <div class="glass-card p-8 rounded-2xl border border-white/5 space-y-6">
+        <div>
+            <h2 class="text-2xl font-extrabold text-white">Create Video Project</h2>
+            <p class="text-sm text-slate-400 mt-1">Initialize a new video production workflow sequence.</p>
+        </div>
+
+        <form action="/projects" method="POST" class="space-y-5">
+            <!-- Title -->
+            <div class="flex flex-col gap-1.5">
+                <label for="title" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Video Title</label>
+                <input type="text" id="title" name="title" required placeholder="e.g., The Mystery of Roanoke Colony"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+            </div>
+
+            <!-- Topic -->
+            <div class="flex flex-col gap-1.5">
+                <label for="topic" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Core Research Topic / Question</label>
+                <input type="text" id="topic" name="topic" required placeholder="e.g., What happened to the colonists of Roanoke in 1590?"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Niche -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="niche" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Channel Niche</label>
+                    <select id="niche" name="niche" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="history" {% if defaults.default_niche == 'history' %}selected{% endif %}>History</option>
+                        <option value="science" {% if defaults.default_niche == 'science' %}selected{% endif %}>Science & Astronomy</option>
+                        <option value="mystery" {% if defaults.default_niche == 'mystery' %}selected{% endif %}>Mystery & True Crime</option>
+                        <option value="finance" {% if defaults.default_niche == 'finance' %}selected{% endif %}>Finance & Explainer</option>
+                        <option value="general" {% if defaults.default_niche == 'general' %}selected{% endif %}>General Curiosity</option>
+                    </select>
+                </div>
+
+                <!-- Language -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="language" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Voice Language</label>
+                    <select id="language" name="language" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="en" {% if defaults.default_language == 'en' %}selected{% endif %}>English (US / GB)</option>
+                        <option value="vi" {% if defaults.default_language == 'vi' %}selected{% endif %}>Vietnamese (vi-VN)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Voice Preset -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="voice_preset" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Voice Preset</label>
+                    <select id="voice_preset" name="voice_preset" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        {% for key, val in voices.items() %}
+                        <option value="{{ key }}" {% if defaults.default_voice == key %}selected{% endif %}>{{ key | capitalize }} ({{ val.split('-')[0] }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Target Duration -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="duration_target" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Target Duration (seconds)</label>
+                    <input type="number" id="duration_target" name="duration_target" value="{{ defaults.default_duration }}" required
+                           class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="flex flex-col gap-1.5">
+                <label for="notes" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Project Notes / Ideas</label>
+                <textarea id="notes" name="notes" rows="4" placeholder="Add custom hook suggestions, visual styles, or direct guidelines..."
+                          class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors resize-none"></textarea>
+            </div>
+
+            <!-- Action buttons -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
+                <a href="/projects" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-gold px-6 py-2.5 rounded-xl text-sm font-bold">
+                    Initialize Pipeline
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

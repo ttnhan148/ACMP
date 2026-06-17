@@ -1,0 +1,138 @@
+{% set thumbnail_list = [] %}
+{% for a in project.artifacts %}
+    {% if a.type == 'thumbnail' %}
+        {% set _ = thumbnail_list.append(a) %}
+    {% endif %}
+{% endfor %}
+{% set thumb_art = thumbnail_list[0] if thumbnail_list else None %}
+
+<div class="space-y-6">
+    <!-- Step Header -->
+    <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+            <span class="text-[10px] text-gold-500 font-bold uppercase tracking-widest">Step 7</span>
+            <h3 class="text-xl font-bold text-white">Create Thumbnail</h3>
+        </div>
+        <div>
+            {% if step.status == 'done' %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Completed
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span> Thumbnail Missing
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Step Work Area -->
+    <div class="space-y-6">
+        <!-- resolved prompt box -->
+        {% if prompt %}
+        {% set resolved_prompt = prompt.template_text
+            .replace("[TOPIC]", project.topic)
+            .replace("[VIDEO TITLE]", project.title)
+            .replace("[NICHE]", project.niche | capitalize)
+            .replace("[EMOTION]", "curiosity / awe") %}
+            
+        <div class="border border-gold-500/10 bg-[#111726]/40 p-5 rounded-2xl space-y-3">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="sparkles" class="h-4 w-4 text-gold-500"></i>
+                    <h4 class="text-xs font-bold text-white uppercase tracking-wider">Thumbnail Designer Prompt (P-04)</h4>
+                </div>
+                <button onclick="copyThumbPrompt()" class="text-xs text-gold-500 hover:text-amber-400 font-bold flex items-center gap-1">
+                    <i data-lucide="copy" class="h-3.5 w-3.5"></i>
+                    Copy Resolved Prompt
+                </button>
+            </div>
+            
+            <pre id="resolved-thumb-prompt" class="text-[11px] text-slate-400 font-mono bg-black/20 p-4 rounded-xl border border-white/5 overflow-x-auto whitespace-pre-wrap max-h-48 scrollbar-thin">{{ resolved_prompt }}</pre>
+            <p class="text-[10px] text-slate-500">Feed this prompt into your image generator (DALL-E or Midjourney) or design the layout manually in Canva using these guidelines.</p>
+        </div>
+        {% endif %}
+
+        <!-- Uploader Form -->
+        <div class="glass-card p-5 rounded-2xl border border-white/5 bg-[#0d121e]/30 space-y-4">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider">Upload Final Thumbnail File</h4>
+            
+            <form hx-post="/projects/{{ project.id }}/steps/thumbnail/upload" 
+                  hx-target="#pipeline-steps-list"
+                  enctype="multipart/form-data" 
+                  class="space-y-4">
+                
+                <div class="flex items-center justify-center w-full">
+                    <label for="thumb-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-slate-800 border-dashed rounded-xl cursor-pointer hover:border-gold-500/40 hover:bg-white/[0.01] transition-all">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <i data-lucide="image" class="w-8 h-8 text-slate-500 mb-2"></i>
+                            <p class="text-xs font-semibold text-slate-400">Click to select thumbnail image</p>
+                            <p class="text-[10px] text-slate-600 mt-1">PNG or JPG (1280x720 recommended)</p>
+                        </div>
+                        <input id="thumb-file" type="file" name="file" accept="image/*" class="hidden" onchange="showSelectedThumb(this)" required />
+                    </label>
+                </div>
+                <div id="thumb-file-name" class="text-xs text-slate-400 font-semibold pl-2 border-l border-gold-500/30 truncate hidden"></div>
+
+                <!-- submit -->
+                <div class="flex justify-between items-center pt-2">
+                    <span></span>
+                    <button type="submit" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+                        <i data-lucide="upload" class="h-4 w-4 text-slate-900"></i>
+                        Upload and Save
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        {% if thumb_art %}
+        <!-- Thumbnail Preview -->
+        <div class="glass-card p-5 rounded-2xl border border-gold-500/10 space-y-3 bg-gradient-to-b from-[#111726]/40 to-transparent">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="eye" class="h-4 w-4 text-gold-500"></i>
+                Active Thumbnail Preview
+            </h4>
+            
+            <div class="w-full max-w-md mx-auto aspect-video rounded-xl overflow-hidden border border-white/5 bg-slate-950">
+                <img src="/projects/{{ project.id }}/thumbnail.png?v={{ thumb_art.version }}" alt="Thumbnail Preview" class="w-full h-full object-cover" />
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 pt-1">
+                <span>File Path: projects/{{ project.id }}/thumbnail.png</span>
+                <span>Size: {{ (thumb_art.file_size / 1024) | int }} KB</span>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-between items-center pt-6 border-t border-white/5 mt-8">
+        <button type="button" hx-post="/projects/{{ project.id }}/steps/thumbnail/status" hx-vals='{"status": "skipped", "notes": "Thumbnail skipped."}' hx-target="#pipeline-steps-list" class="text-xs font-semibold text-slate-500 hover:text-slate-300">
+            Skip Step
+        </button>
+        {% if step.status == 'done' %}
+        <button onclick="loadStepWorkspace('seo')" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+            Proceed to SEO
+            <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+    function copyThumbPrompt() {
+        const promptText = document.getElementById("resolved-thumb-prompt").innerText;
+        navigator.clipboard.writeText(promptText);
+        alert("Thumbnail Prompt copied to clipboard!");
+    }
+
+    function showSelectedThumb(input) {
+        const nameEl = document.getElementById("thumb-file-name");
+        if (input.files.length > 0) {
+            nameEl.innerText = `Selected file: ${input.files[0].name}`;
+            nameEl.classList.remove("hidden");
+        } else {
+            nameEl.classList.add("hidden");
+        }
+    }
+</script>

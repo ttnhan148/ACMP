@@ -1,0 +1,72 @@
+[
+  {
+    "name": "P-01: Topic Research",
+    "category": "research",
+    "variables": ["TOPIC", "NICHE", "AUDIENCE", "DURATION"],
+    "description": "Research topics, hook angles, key facts, and visual opportunities for YouTube documentary-style videos.",
+    "template_text": "ROLE: You are an expert content researcher for YouTube documentary-style videos.\n\nTASK: Research the following topic for a YouTube video.\n\nTopic: [TOPIC]\nNiche: [NICHE]\nTarget Audience: [AUDIENCE]\nVideo Length: [DURATION]\n\nPROVIDE:\n1. HOOK ANGLES (3 options)\n   - Each should create instant curiosity in <10 seconds\n   - Use pattern: surprising fact / counter-intuitive claim / unanswered mystery\n\n2. KEY FACTS (5-7)\n   - Each fact must be specific (numbers, dates, names)\n   - Prioritize: little-known > commonly known\n   - Mark each with [VERIFIED] or [NEEDS CHECK]\n\n3. NARRATIVE ARC\n   - Beginning: what sets the stage\n   - Tension: what conflict/mystery/question drives the story\n   - Climax: the revelation or turning point\n   - Resolution: what we learn from this\n\n4. VISUAL OPPORTUNITIES (5)\n   - Describe scenes that would look great as AI-generated images\n\n5. SOURCES (3-5)\n   - Provide specific sources for fact-checking\n\nFORMAT: Use headers and bullet points. Be concise but specific."
+  },
+  {
+    "name": "P-02: Script Writing",
+    "category": "script",
+    "variables": ["TOPIC", "DURATION", "STYLE", "RESEARCH_NOTES"],
+    "description": "Write a complete narration-only script optimized for viewer retention and pacing.",
+    "template_text": "ROLE: You are a world-class documentary script writer who creates binge-worthy narration for YouTube videos.\n\nTASK: Write a complete narration script for a YouTube video.\n\nTopic: [TOPIC]\nDuration Target: [DURATION] (~1,200 words for 8 min)\nStyle: [STYLE]\nVoice: Conversational but authoritative. Like David Attenborough meets a podcast host.\n\nRESEARCH NOTES:\n[RESEARCH_NOTES]\n\nSCRIPT STRUCTURE:\n1. HOOK (0:00-0:15) — 2-3 sentences that make viewers UNABLE to click away\n2. INTRO (0:15-0:45) — Set context, promise what they will learn\n3. MAIN STORY (0:45-7:00) — The core narrative with:\n   - Clear transitions between sections\n   - Retention loops: pose a question → answer it 30-60s later\n   - Specific details (names, numbers, places) — not vague generalizations\n4. CLIMAX (7:00-7:30) — The most impactful revelation\n5. CTA (7:30-8:00) — Prompt: like, subscribe, suggest related topic\n\nRULES:\n- Output ONLY the narration text. No [SCENE], no (pause), no stage directions.\n- Use short sentences. Max 20 words per sentence.\n- Every 60 seconds, include a curiosity hook to maintain retention.\n- Use conversational language: contractions, rhetorical questions.\n- Do NOT start with 'Have you ever wondered' or any cliche opener.\n- Separate paragraphs with blank lines (each paragraph = ~30s of narration)."
+  },
+  {
+    "name": "P-03: Scene Descriptions + Image Prompts",
+    "category": "visual",
+    "variables": ["SCRIPT", "SCENE_COUNT", "STYLE", "PALETTE"],
+    "description": "Translate script paragraphs into scene-by-scene image generation prompts for AI tools.",
+    "template_text": "ROLE: You are a visual director who translates narration into cinematic image descriptions for AI image generation.\n\nTASK: Create scene-by-scene image generation prompts for this script.\n\nSCRIPT:\n[SCRIPT]\n\nREQUIREMENTS:\n- Create exactly [SCENE_COUNT] scenes, evenly distributed across the script\n- Each scene covers approximately 40-50 seconds of narration\n- ALL images must share a consistent visual style:\n  Style: [STYLE] (e.g. photorealistic, digital painting, cinematic illustration)\n  Color palette: [PALETTE] (e.g. warm earth tones, cool blue-silver, dramatic high-contrast)\n\nOUTPUT FORMAT (for each scene):\n\nScene [N]:\nNarration it covers: [First and last sentence of the section]\nImage prompt: [Detailed prompt for AI image generation. Include: subject, setting, lighting, camera angle, mood, style. 50-80 words.]\n\nSTYLE RULES:\n- No text or letters in any image\n- No recognizable real people or celebrities\n- Consistent lighting direction across all scenes\n- 16:9 aspect ratio composition\n- Cinematic quality, high detail"
+  },
+  {
+    "name": "P-04: Thumbnail Concept",
+    "category": "visual",
+    "variables": ["TOPIC", "TITLE", "NICHE", "EMOTION"],
+    "description": "Generate high-CTR thumbnail ideas including visual compositions and text overlays.",
+    "template_text": "ROLE: You are a YouTube thumbnail designer who maximizes CTR.\n\nTASK: Design 3 thumbnail concepts for this video.\n\nTopic: [TOPIC]\nTitle: [TITLE]\nNiche: [NICHE]\nTarget emotion: [EMOTION] (curiosity / shock / awe / fear / excitement)\n\nFOR EACH CONCEPT, PROVIDE:\n1. Visual description (what the image shows)\n2. Text overlay (MAX 4 words, large bold)\n3. Color scheme\n4. AI image generation prompt (if using Gemini/DALL-E)\n\nTHUMBNAIL RULES:\n- High contrast, visible at mobile size (small)\n- Face/emotion if possible (even illustrated)\n- Create information gap: hint but don't reveal\n- Bold text: max 4 words, contrasting color\n- NO clickbait that video cannot deliver"
+  },
+  {
+    "name": "P-05: SEO Metadata",
+    "category": "seo",
+    "variables": ["TOPIC", "NICHE", "SUMMARY", "GEOGRAPHY"],
+    "description": "Generate optimized titles, descriptions, chapters, and tags for SEO.",
+    "template_text": "ROLE: You are a YouTube SEO specialist.\n\nTASK: Generate optimized metadata for this YouTube video.\n\nTopic: [TOPIC]\nNiche: [NICHE]\nScript summary: [SUMMARY]\nTarget geography: [GEOGRAPHY]\n\nGENERATE:\n\n1. TITLE (3 options, each max 60 characters)\n   - Include primary keyword near the beginning\n   - Create curiosity gap\n   - Avoid ALL CAPS (use Title Case)\n\n2. DESCRIPTION (2000 characters)\n   - First 2 lines: keyword-rich summary (shown before 'Show more')\n   - Paragraph 1: what the video covers (100 words)\n   - Timestamps/Chapters (at least 5)\n   - Paragraph 2: context and related topics (100 words)\n   - Call to action: subscribe + related videos\n   - 3 relevant links/references\n\n3. TAGS (15 tags)\n   - 5 broad (high volume)\n   - 5 medium (moderate competition)\n   - 5 long-tail (low competition, specific)\n\n4. HASHTAGS (3)\n   - #[PrimaryKeyword] #[Niche] #[Trending]"
+  },
+  {
+    "name": "P-06: Niche Analysis",
+    "category": "analysis",
+    "variables": ["NICHE", "SUB_NICHE", "LANGUAGE", "GEOGRAPHY"],
+    "description": "Evaluate niches and sub-niches for demand, competition, and RPM feasibility.",
+    "template_text": "ROLE: You are a YouTube content strategist specializing in faceless channel monetization.\n\nTASK: Analyze this niche for monetization potential.\n\nNiche: [NICHE]\nSub-niche (if any): [SUB_NICHE]\nTarget language: [LANGUAGE]\nTarget geography: [GEOGRAPHY]\n\nANALYZE:\n\n1. DEMAND SCORE (1-10)\n   - Search volume estimation\n   - YouTube search autocomplete analysis\n   - Trend direction: growing / stable / declining\n\n2. COMPETITION SCORE (1-10)\n   - Number of established channels in this niche\n   - Quality bar of top channels\n   - Content gap opportunities\n\n3. MONETIZATION SCORE (1-10)\n   - Estimated RPM range (USD)\n   - Advertiser demand in this vertical\n   - Affiliate / sponsorship potential\n\n4. FACELESS FEASIBILITY (1-10)\n   - How well does this niche work without a face/personality?\n   - Visual content availability for AI generation\n   - Narration style fit\n\n5. RECOMMENDED SUB-NICHES (top 5)\n   - Name, why, estimated difficulty\n\n6. VERDICT\n   - GO / CAUTION / AVOID\n   - Estimated time to first $100/month"
+  },
+  {
+    "name": "P-07: Compliance Review",
+    "category": "compliance",
+    "variables": ["TOPIC", "SCRIPT"],
+    "description": "Pre-publish risk check for copyright, policies, and AI generation safety.",
+    "template_text": "ROLE: You are a YouTube content compliance specialist.\n\nTASK: Review this video content for monetization risks BEFORE publishing.\n\nTOPIC: [TOPIC]\nSCRIPT:\n[SCRIPT]\n\nCHECK EACH CATEGORY:\n\n1. COPYRIGHT RISK (Low/Medium/High)\n   - Any claims that seem copied from specific sources?\n   - Any mention of copyrighted characters, brands, songs?\n   - Recommendation: [specific fix if needed]\n\n2. YOUTUBE POLICY RISK (Low/Medium/High)\n   - Violence, hate speech, misinformation risks?\n   - Medical/financial advice without disclaimers?\n   - Controversial topics that may limit ads?\n   - Recommendation: [specific fix if needed]\n\n3. AI CONTENT RISK (Low/Medium/High)\n   - Does this feel mass-produced or generic?\n   - Is there genuine educational/entertainment value?\n   - Transformation score: how much original insight vs. regurgitation?\n   - Recommendation: [specific fix if needed]\n\n4. BRAND SAFETY (Low/Medium/High)\n   - Would mainstream advertisers be comfortable next to this content?\n   - Any sensitive topics?\n   - Recommendation: [specific fix if needed]\n\n5. OVERALL VERDICT\n   - SAFE TO PUBLISH / NEEDS EDITS / DO NOT PUBLISH\n   - List all required changes before publishing"
+  },
+  {
+    "name": "P-08: Script Improvement (Post-Performance)",
+    "category": "analysis",
+    "variables": ["SCRIPT", "CTR", "RETENTION", "DROPOFFS", "COMMENTS", "VIEWS", "DAYS"],
+    "description": "Rewrite scripts based on retention drops and performance analytics.",
+    "template_text": "ROLE: You are a YouTube content optimizer who improves scripts based on actual performance data.\n\nTASK: Improve this script based on performance feedback.\n\nORIGINAL SCRIPT:\n[SCRIPT]\n\nPERFORMANCE DATA:\n- CTR: [CTR] (target: >5%)\n- Avg retention: [RETENTION] (target: >40%)\n- Retention drop-off points: [DROPOFFS]\n- Comments feedback: [COMMENTS]\n- Views: [VIEWS] in [DAYS] days\n\nDIAGNOSE THE PROBLEMS:\n1. If CTR low → Hook and title are weak. Rewrite the first 15 seconds.\n2. If early retention low → First 60 seconds boring. Add mystery/tension.\n3. If mid-video drop → Missing retention loops. Add questions/cliffhangers.\n4. If ending drop → CTA too early or boring. Make it feel natural.\n\nOUTPUT:\n- Diagnosis: what's wrong and why\n- Rewritten script sections (only the parts that need fixing)\n- 3 alternative hooks to A/B test\n- 3 alternative titles to A/B test"
+  },
+  {
+    "name": "P-09: Batch Topic Generation",
+    "category": "research",
+    "variables": ["NICHE", "SUB_NICHE", "STYLE", "AUDIENCE", "LANGUAGE", "COUNT"],
+    "description": "Generate bulk content ideas matching evergreen and trending parameters.",
+    "template_text": "ROLE: You are a content strategist for YouTube faceless channels.\n\nTASK: Generate a content calendar of video topics.\n\nNiche: [NICHE]\nSub-niche focus: [SUB_NICHE]\nChannel style: [STYLE] (e.g. Documentary / Educational / Listicle / Mystery)\nTarget audience: [AUDIENCE]\nLanguage: [LANGUAGE]\nNumber of topics needed: [COUNT]\n\nFOR EACH TOPIC:\n1. Title (compelling, 60 chars max)\n2. Search demand estimate: High / Medium / Low\n3. Competition estimate: High / Medium / Low\n4. Evergreen or Trending?\n5. Estimated RPM tier: High ($5+) / Medium ($3-5) / Low (<$3)\n6. Difficulty to produce: Easy / Medium / Hard\n7. One-line hook\n\nPRIORITIZE:\n- Topics with HIGH demand + LOW/MEDIUM competition first\n- Mix: 70% evergreen + 30% trending\n- Avoid: topics already oversaturated on YouTube\n\nOUTPUT: Ranked table, best opportunities first."
+  },
+  {
+    "name": "P-10: Claude Project System Prompt",
+    "category": "system",
+    "variables": ["NICHE", "SUB_NICHE", "STYLE", "AUDIENCE"],
+    "description": "System prompt to initialize Claude projects with persistent instructions.",
+    "template_text": "# ACMP Solo Content Production Assistant\n\n## Your Role\nYou are my AI content production partner for a YouTube faceless channel.\nYou help me create documentary-style videos from topic to publish-ready content.\n\n## My Channel\n- Niche: [NICHE]\n- Sub-niche: [SUB_NICHE]\n- Style: [STYLE]\n- Target audience: [AUDIENCE]\n- Voice: Authoritative but conversational, like a great podcast host\n- Video length: 8-10 minutes"
+  }
+]

@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}Video Performance Diagnostics — {{ project.title }}{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <!-- Breadcrumbs & Navigation -->
+    <div class="flex items-center gap-2 text-sm text-slate-500">
+        <a href="/analytics" class="hover:text-white">Performance Analytics</a>
+        <span>/</span>
+        <span class="text-slate-300">Video Diagnostics</span>
+    </div>
+
+    <!-- Title Header -->
+    <div class="pb-5 border-b border-white/5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h2 class="text-2xl font-extrabold text-white">{{ project.title }}</h2>
+            <p class="text-xs text-slate-400 mt-1">Topic: <span class="text-slate-300">{{ project.topic }}</span> • Published: {{ project.published_at.split(' ')[0] if project.published_at else 'Unknown' }}</p>
+        </div>
+        
+        <a href="/projects/{{ project.id }}" class="btn-gold px-4 py-2 rounded-xl text-xs font-bold flex items-center gap-1">
+            Open Production Pipeline
+            <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </a>
+    </div>
+
+    <!-- Metrics scorecard and Chart grid split -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left: Video stats detail cards -->
+        <div class="space-y-5">
+            <div class="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
+                <h3 class="text-sm font-bold text-white uppercase tracking-wider flex items-center gap-1.5 border-b border-white/5 pb-3">
+                    <i data-lucide="sliders" class="h-4.5 w-4.5 text-gold-500"></i>
+                    Performance Scorecard
+                </h3>
+
+                {% if stats %}
+                <div class="space-y-3.5 text-xs">
+                    <!-- Views -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Lifetime Views</span>
+                        <span class="font-bold text-white">{{ stats.total_views | format_views }}</span>
+                    </div>
+                    <!-- Revenue -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Estimated Revenue</span>
+                        <span class="font-bold text-gold-500">{{ stats.total_revenue | format_currency }}</span>
+                    </div>
+                    <!-- CTR -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Click-Through Rate (CTR)</span>
+                        <span class="font-bold text-white">{{ "%.1f" | format(stats.avg_ctr) }}%</span>
+                    </div>
+                    <!-- Retention -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Average Retention Pct</span>
+                        <span class="font-bold text-white">{{ "%.1f" | format(stats.avg_retention) }}%</span>
+                    </div>
+                    <!-- Subscribers -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Subscribers Gained</span>
+                        <span class="font-bold text-white">+{{ stats.total_subs }}</span>
+                    </div>
+                    <!-- Likes -->
+                    <div class="flex justify-between items-center py-2 border-b border-white/5">
+                        <span class="text-slate-400 font-medium">Likes</span>
+                        <span class="font-bold text-white">{{ stats.total_likes }}</span>
+                    </div>
+                    <!-- Comments -->
+                    <div class="flex justify-between items-center py-2">
+                        <span class="text-slate-400 font-medium">Comments</span>
+                        <span class="font-bold text-white">{{ stats.total_comments }}</span>
+                    </div>
+                </div>
+                {% else %}
+                <p class="text-xs text-slate-500 italic">No sync logs found for this project. Return to Step 11 on the pipeline and click Sync.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right: Viewer Retention Curve Chart (Cols 2 & 3) -->
+        <div class="lg:col-span-2 space-y-6">
+            <div class="glass-card p-6 rounded-2xl border border-white/5">
+                <h3 class="text-sm font-bold text-white mb-6 flex items-center gap-2">
+                    <i data-lucide="trending-down" class="h-4.5 w-4.5 text-gold-500"></i>
+                    Viewer Retention Curve
+                </h3>
+
+                <div class="h-72 w-full relative">
+                    <canvas id="retention-chart" class="w-full h-full"></canvas>
+                </div>
+            </div>
+
+            <!-- Diagnostic Review Box -->
+            <div class="glass-card p-6 rounded-2xl border border-gold-500/10 bg-gradient-to-r from-[#111726]/40 to-transparent space-y-3">
+                <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                    <i data-lucide="activity" class="h-4 w-4 text-gold-500"></i>
+                    Retention Drop-off Diagnosis
+                </h4>
+                
+                {% if stats %}
+                <div class="text-xs text-slate-400 leading-relaxed space-y-3">
+                    <div>
+                        <span class="font-bold text-slate-200 block mb-0.5">• Intro Hook Retention check:</span>
+                        <p>The first 30 seconds show an expected drop. Average retention settled around <span class="font-bold text-white">{{ "%.1f" | format(stats.avg_retention) }}%</span>. If this drop was steep (&gt;40% lost under 30s), it indicates that the thumbnail and script hooks were misaligned. Redesign hooks next time.</p>
+                    </div>
+                    <div>
+                        <span class="font-bold text-slate-200 block mb-0.5">• Narrative Pacing check:</span>
+                        <p>The middle segment decays at a healthy rate, representing consistent pacing. Adding curiosity questions every 60 seconds (as instructed by prompt P-02) helped maintain baseline visual attention.</p>
+                    </div>
+                </div>
+                
+                <div class="pt-2">
+                    <a href="/prompts/8" class="btn-gold px-4 py-2 rounded-xl text-xs inline-flex items-center gap-1">
+                        Use Prompt P-08 to Improve Script Hooks
+                        <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const rawRetention = {{ retention_curve | safe }};
+        const labels = rawRetention.map(r => `${r.percent}%`);
+        const data = rawRetention.map(r => r.retention);
+        
+        const ctx = document.getElementById('retention-chart').getContext('2d');
+        
+        // Premium chart colors
+        const blueColor = '#3b82f6';
+        
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Audience Retained (%)',
+                    data: data,
+                    borderColor: blueColor,
+                    backgroundColor: 'rgba(59, 130, 246, 0.08)',
+                    borderWidth: 2.5,
+                    tension: 0.35,
+                    fill: true,
+                    pointRadius: 1,
+                    pointHoverRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Retained: ${context.parsed.y.toFixed(1)}%`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: { color: 'rgba(255, 255, 255, 0.02)' },
+                        ticks: { color: '#64748b', font: { family: 'Inter', size: 9 } },
+                        title: { display: true, text: 'Video Duration Completed', color: '#64748b', font: { size: 10 } }
+                    },
+                    y: {
+                        min: 0,
+                        max: 100,
+                        grid: { color: 'rgba(255, 255, 255, 0.03)' },
+                        ticks: { color: '#64748b', font: { family: 'Inter', size: 9 }, callback: (val) => `${val}%` },
+                        title: { display: true, text: 'Retention Rate', color: '#64748b', font: { size: 10 } }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

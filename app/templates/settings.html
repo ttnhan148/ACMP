@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+
+{% block title %}System Settings{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto space-y-6">
+    <!-- Header -->
+    <div>
+        <h2 class="text-3xl font-extrabold text-white">Settings</h2>
+        <p class="text-sm text-slate-400 mt-1">Configure default presets, system paths, and platform credentials.</p>
+    </div>
+
+    <div class="glass-card p-8 rounded-2xl border border-white/5">
+        <form action="/settings" method="POST" class="space-y-6">
+            <!-- Channel Name -->
+            <div class="flex flex-col gap-1.5">
+                <label for="channel_name" class="text-xs font-bold text-slate-400 uppercase tracking-wider">YouTube Channel Name</label>
+                <input type="text" id="channel_name" name="channel_name" 
+                       value="{{ settings.channel_name }}" placeholder="e.g., Timeline Chronicles"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Default Niche -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="default_niche" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Default Channel Niche</label>
+                    <select id="default_niche" name="default_niche" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="history" {% if settings.default_niche == 'history' %}selected{% endif %}>History</option>
+                        <option value="science" {% if settings.default_niche == 'science' %}selected{% endif %}>Science & Astronomy</option>
+                        <option value="mystery" {% if settings.default_niche == 'mystery' %}selected{% endif %}>Mystery & True Crime</option>
+                        <option value="finance" {% if settings.default_niche == 'finance' %}selected{% endif %}>Finance & Explainer</option>
+                        <option value="general" {% if settings.default_niche == 'general' %}selected{% endif %}>General Curiosity</option>
+                    </select>
+                </div>
+
+                <!-- Default Language -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="default_language" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Default Voice Language</label>
+                    <select id="default_language" name="default_language" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="en" {% if settings.default_language == 'en' %}selected{% endif %}>English (US / GB)</option>
+                        <option value="vi" {% if settings.default_language == 'vi' %}selected{% endif %}>Vietnamese (vi-VN)</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <!-- Default Voice -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="default_voice" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Default Neural Voice</label>
+                    <select id="default_voice" name="default_voice" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        {% for key, val in voices.items() %}
+                        <option value="{{ key }}" {% if settings.default_voice == key %}selected{% endif %}>{{ key | capitalize }} ({{ val.split('-')[0] }})</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Default Duration -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="default_duration" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Default Duration (seconds)</label>
+                    <input type="number" id="default_duration" name="default_duration" 
+                           value="{{ settings.default_duration }}" required
+                           class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-5 pt-4 border-t border-white/5">
+                <!-- Projects Dir -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="projects_dir" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Projects Asset Folder</label>
+                    <input type="text" id="projects_dir" name="projects_dir" 
+                           value="{{ settings.projects_dir }}" required
+                           class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                </div>
+
+                <!-- Auto Backup -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="auto_backup" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Auto Backup DB</label>
+                    <select id="auto_backup" name="auto_backup" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="true" {% if settings.auto_backup == 'true' %}selected{% endif %}>Enabled (backup on boot)</option>
+                        <option value="false" {% if settings.auto_backup == 'false' %}selected{% endif %}>Disabled</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- FFmpeg Path -->
+            <div class="flex flex-col gap-1.5">
+                <label for="ffmpeg_path" class="text-xs font-bold text-slate-400 uppercase tracking-wider">FFmpeg Execution Path</label>
+                <input type="text" id="ffmpeg_path" name="ffmpeg_path" 
+                       value="{{ settings.ffmpeg_path }}" placeholder="e.g. ffmpeg"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                <p class="text-[10px] text-slate-500">The application auto-detects Windows local FFmpeg builds placed inside the bin/ directory. Leave as 'ffmpeg' if globally installed.</p>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="flex justify-end gap-3 pt-6 border-t border-white/5">
+                <button type="submit" class="btn-gold px-6 py-2.5 rounded-xl text-sm font-bold">
+                    Save Configurations
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,123 @@
+{% set video_list = [] %}
+{% for a in project.artifacts %}
+    {% if a.type == 'video' %}
+        {% set _ = video_list.append(a) %}
+    {% endif %}
+{% endfor %}
+{% set video_art = video_list[0] if video_list else None %}
+
+{% set voice_list = [] %}
+{% for a in project.artifacts %}
+    {% if a.type == 'voice' %}
+        {% set _ = voice_list.append(a) %}
+    {% endif %}
+{% endfor %}
+{% set voice_art = voice_list[0] if voice_list else None %}
+
+{% set scene_images = [] %}
+{% for a in project.artifacts %}
+    {% if a.type == 'scene_image' %}
+        {% set _ = scene_images.append(a) %}
+    {% endif %}
+{% endfor %}
+
+<div class="space-y-6">
+    <!-- Step Header -->
+    <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+            <span class="text-[10px] text-gold-500 font-bold uppercase tracking-widest">Step 6</span>
+            <h3 class="text-xl font-bold text-white">Assemble Final Video</h3>
+        </div>
+        <div>
+            {% if step.status == 'done' %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Completed
+                </span>
+            {% elif step.status == 'in_progress' %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-blue-500/10 text-blue-500">
+                    <span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span> Compiling (FFmpeg)
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span> Pending Assembly
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Step Work Area -->
+    <div class="space-y-6">
+        {% if not voice_art or not scene_images %}
+        <!-- Prerequisites missing warning -->
+        <div class="border border-yellow-500/15 bg-yellow-500/5 p-5 rounded-2xl flex gap-3 text-sm text-slate-300">
+            <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-500 shrink-0 mt-0.5"></i>
+            <div>
+                <h4 class="font-bold text-white">Prerequisites Missing</h4>
+                <p class="mt-1 leading-relaxed text-slate-400">You must synthesize the narrator audio (Step 4) and upload scene images (Step 5) before building the final video compilation.</p>
+            </div>
+        </div>
+        {% else %}
+
+        <!-- Assembly Form -->
+        <form hx-post="/projects/{{ project.id }}/steps/assembly/assemble" 
+              hx-target="#pipeline-steps-list" 
+              class="grid grid-cols-1 md:grid-cols-3 gap-5 items-end bg-[#0d121e]/40 border border-white/5 p-5 rounded-2xl">
+            <!-- Resolution -->
+            <div class="flex flex-col gap-1.5">
+                <label for="resolution" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Video Dimensions</label>
+                <select id="resolution" name="resolution" class="w-full bg-[#07090e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
+                    <option value="1920x1080">Horizontal (1920x1080 - 16:9)</option>
+                    <option value="1080x1920">Vertical Shorts (1080x1920 - 9:16)</option>
+                </select>
+            </div>
+            <!-- Framerate -->
+            <div class="flex flex-col gap-1.5">
+                <label for="fps" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Target Framerate</label>
+                <select id="fps" name="fps" class="w-full bg-[#07090e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors">
+                    <option value="30">30 FPS (Standard)</option>
+                    <option value="60">60 FPS (Ultra Smooth)</option>
+                </select>
+            </div>
+            <!-- Submit Button -->
+            <button type="submit" 
+                    class="btn-gold w-full py-3 rounded-xl text-sm flex items-center justify-center gap-2"
+                    {% if step.status == 'in_progress' %}disabled{% endif %}>
+                <i data-lucide="video" class="h-4.5 w-4.5 text-slate-900"></i>
+                {% if step.status == 'in_progress' %}Compiling Video...{% else %}Compile Video (FFmpeg){% endif %}
+            </button>
+        </form>
+
+        {% if video_art %}
+        <!-- Final compiled video preview -->
+        <div class="glass-card p-5 rounded-2xl border border-gold-500/10 space-y-4 bg-gradient-to-b from-[#111726]/40 to-transparent">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="play-circle" class="h-4 w-4 text-gold-500"></i>
+                Compiled Video Output (v{{ video_art.version }})
+            </h4>
+            
+            <div class="aspect-video w-full rounded-xl overflow-hidden border border-white/5 bg-slate-950 relative">
+                <video src="/projects/{{ project.id }}/final_video.mp4?v={{ video_art.version }}" controls class="w-full h-full object-contain"></video>
+            </div>
+            <div class="flex justify-between items-center text-[10px] text-slate-500 pt-1">
+                <span>File Path: projects/{{ project.id }}/final_video.mp4</span>
+                <span>Size: {{ (video_art.file_size / (1024 * 1024)) | round(1) }} MB</span>
+            </div>
+        </div>
+        {% endif %}
+
+        {% endif %}
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-between items-center pt-6 border-t border-white/5 mt-8">
+        <button type="button" hx-post="/projects/{{ project.id }}/steps/assembly/status" hx-vals='{"status": "skipped", "notes": "Video compilation skipped."}' hx-target="#pipeline-steps-list" class="text-xs font-semibold text-slate-500 hover:text-slate-300">
+            Skip Step
+        </button>
+        {% if step.status == 'done' %}
+        <button onclick="loadStepWorkspace('thumbnail')" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+            Proceed to Thumbnail
+            <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </button>
+        {% endif %}
+    </div>
+</div>

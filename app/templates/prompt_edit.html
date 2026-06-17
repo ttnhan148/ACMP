@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if prompt %}Edit Prompt Template{% else %}New Prompt Template{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto space-y-6">
+    <div class="flex items-center gap-2 text-sm text-slate-500">
+        <a href="/prompts" class="hover:text-white">Prompt Library</a>
+        <span>/</span>
+        <span class="text-slate-300">{% if prompt %}Edit{% else %}Create{% endif %} Template</span>
+    </div>
+    
+    <div class="glass-card p-8 rounded-2xl border border-white/5 space-y-6">
+        <div>
+            <h2 class="text-2xl font-extrabold text-white">{% if prompt %}Edit Prompt Template{% else %}Create Prompt Template{% endif %}</h2>
+            <p class="text-sm text-slate-400 mt-1">Configure structural instruction blocks and declare dynamic variables.</p>
+        </div>
+
+        <form action="{% if prompt %}/prompts/{{ prompt.id }}{% else %}/prompts{% endif %}" method="POST" class="space-y-5">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                <!-- Name -->
+                <div class="md:col-span-2 flex flex-col gap-1.5">
+                    <label for="name" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Template Name</label>
+                    <input type="text" id="name" name="name" required placeholder="e.g., P-11: Shorts Hooks Builder"
+                           value="{% if prompt %}{{ prompt.name }}{% endif %}"
+                           class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                </div>
+
+                <!-- Category -->
+                <div class="flex flex-col gap-1.5">
+                    <label for="category" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Category</label>
+                    <select id="category" name="category" class="w-full bg-[#0d121e] border border-white/5 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-gold-500 transition-colors appearance-none">
+                        <option value="research" {% if prompt and prompt.category == 'research' %}selected{% endif %}>Research</option>
+                        <option value="script" {% if prompt and prompt.category == 'script' %}selected{% endif %}>Script Writing</option>
+                        <option value="visual" {% if prompt and prompt.category == 'visual' %}selected{% endif %}>Visuals & Thumbnail</option>
+                        <option value="seo" {% if prompt and prompt.category == 'seo' %}selected{% endif %}>SEO Optimization</option>
+                        <option value="compliance" {% if prompt and prompt.category == 'compliance' %}selected{% endif %}>Compliance Check</option>
+                        <option value="analysis" {% if prompt and prompt.category == 'analysis' %}selected{% endif %}>Performance Analysis</option>
+                        <option value="system" {% if prompt and prompt.category == 'system' %}selected{% endif %}>System Prompt</option>
+                        <option value="general" {% if not prompt or prompt.category == 'general' %}selected{% endif %}>General</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Variables -->
+            <div class="flex flex-col gap-1.5">
+                <label for="variables_raw" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Template Variables (comma-separated)</label>
+                <input type="text" id="variables_raw" name="variables_raw" placeholder="e.g., TOPIC, STYLE, LENGTH"
+                       value="{% if prompt %}{{ prompt.variables | join(', ') }}{% endif %}"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+                <p class="text-[10px] text-slate-500">Variables listed here will generate dynamic form input fields for the user to fill variables and compile templates on-the-fly. Case insensitive.</p>
+            </div>
+
+            <!-- Description -->
+            <div class="flex flex-col gap-1.5">
+                <label for="description" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Short Description / Purpose</label>
+                <input type="text" id="description" name="description" placeholder="Briefly describe what this prompt accomplishes..."
+                       value="{% if prompt %}{{ prompt.description }}{% endif %}"
+                       class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 focus:outline-none focus:border-gold-500 transition-colors">
+            </div>
+
+            <!-- Template Text -->
+            <div class="flex flex-col gap-1.5">
+                <label for="template_text" class="text-xs font-bold text-slate-400 uppercase tracking-wider">Template Text</label>
+                <textarea id="template_text" name="template_text" rows="12" required
+                          placeholder="Write prompt instructions. Use [VARIABLE_NAME] markers corresponding to variables listed above..."
+                          class="w-full bg-[#0d121e]/80 border border-white/5 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-600 font-mono focus:outline-none focus:border-gold-500 transition-colors resize-none scrollbar-thin">{% if prompt %}{{ prompt.template_text }}{% endif %}</textarea>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 pt-4 border-t border-white/5">
+                <a href="/prompts" class="px-5 py-2.5 rounded-xl text-sm font-semibold text-slate-400 hover:text-white transition-colors">
+                    Cancel
+                </a>
+                <button type="submit" class="btn-gold px-6 py-2.5 rounded-xl text-sm font-bold">
+                    Save Template
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

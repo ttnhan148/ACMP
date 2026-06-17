@@ -1,0 +1,46 @@
+<!-- Vertical step list checklist wrapper -->
+<div class="space-y-2.5" 
+     hx-get="/projects/{{ project.id }}/steps/timeline" 
+     hx-trigger="reload-steps, step-updated from:body" 
+     hx-swap="innerHTML">
+    
+    {% for s in project.pipeline_steps %}
+    <div class="step-row-wrapper border border-white/5 bg-[#0a0d16]/30 hover:bg-white/[0.01] rounded-xl p-3 flex items-center justify-between cursor-pointer transition-all duration-200"
+         onclick="loadStepWorkspace('{{ s.step_key }}')">
+        
+        <div class="flex items-center gap-3.5 overflow-hidden">
+            <!-- Step Badge Number -->
+            <button class="step-item-btn h-7 w-7 rounded-lg border flex items-center justify-center font-bold text-xs shrink-0
+                           {% if s.status == 'done' %}done{% elif s.status == 'in_progress' %}in_progress{% elif s.status == 'skipped' %}skipped{% else %}pending{% endif %}"
+                    data-step-key="{{ s.step_key }}"
+                    data-status="{{ s.status }}">
+                {{ s.step_number }}
+            </button>
+            
+            <!-- Step Info -->
+            <div class="overflow-hidden">
+                <h4 class="text-xs font-bold text-slate-200">{{ s.step_name }}</h4>
+                {% if s.notes %}
+                    <p class="text-[10px] text-slate-500 truncate w-40 md:w-48 mt-0.5">{{ s.notes }}</p>
+                {% else %}
+                    <p class="text-[10px] text-slate-600 mt-0.5">Click to configure</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Right Side Indicator Icon -->
+        <div class="shrink-0 pl-2">
+            {% if s.status == 'done' %}
+                <i data-lucide="check-circle-2" class="h-4.5 w-4.5 text-gold-500 fill-gold-500/10"></i>
+            {% elif s.status == 'in_progress' %}
+                <i data-lucide="loader-2" class="h-4.5 w-4.5 text-blue-500 animate-spin"></i>
+            {% elif s.status == 'skipped' %}
+                <i data-lucide="minus-circle" class="h-4.5 w-4.5 text-slate-500"></i>
+            {% else %}
+                <i data-lucide="circle" class="h-4 w-4 text-slate-700"></i>
+            {% endif %}
+        </div>
+
+    </div>
+    {% endfor %}
+</div>

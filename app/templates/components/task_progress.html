@@ -1,0 +1,49 @@
+<div class="glass-card p-4 rounded-2xl border 
+            {% if task.status == 'failed' %}border-red-500/20 bg-red-950/10 text-red-200
+            {% elif task.status == 'done' %}border-green-500/20 bg-green-950/10 text-green-200
+            {% else %}border-blue-500/20 bg-blue-950/10 text-blue-200{% endif %} 
+            mb-6 flex flex-col gap-3"
+     {% if poll %}
+     hx-get="/projects/{{ project_id }}/tasks/active" 
+     hx-trigger="every 1.5s" 
+     hx-swap="outerHTML"
+     {% endif %}>
+    
+    <div class="flex items-center justify-between">
+        <div class="flex items-center gap-2.5">
+            {% if task.status == 'running' %}
+                <i data-lucide="loader-2" class="h-4.5 w-4.5 text-blue-400 animate-spin"></i>
+            {% elif task.status == 'queued' %}
+                <i data-lucide="clock" class="h-4.5 w-4.5 text-blue-400 animate-pulse"></i>
+            {% elif task.status == 'done' %}
+                <i data-lucide="check-circle-2" class="h-4.5 w-4.5 text-green-400"></i>
+            {% elif task.status == 'failed' %}
+                <i data-lucide="alert-octagon" class="h-4.5 w-4.5 text-red-400"></i>
+            {% endif %}
+            
+            <span class="text-xs font-bold uppercase tracking-wider">
+                {% if task.status == 'queued' %}Task Queued:
+                {% elif task.status == 'running' %}Executing:
+                {% elif task.status == 'done' %}Completed:
+                {% else %}Failed:{% endif %}
+                {{ task.type_name }}
+            </span>
+        </div>
+        <span class="text-xs font-bold">{{ task.progress_pct }}%</span>
+    </div>
+
+    <!-- Progress Track -->
+    <div class="w-full h-2 rounded-full bg-black/30 overflow-hidden">
+        <div class="h-full rounded-full transition-all duration-300
+                    {% if task.status == 'failed' %}bg-red-500
+                    {% elif task.status == 'done' %}bg-green-500
+                    {% else %}bg-blue-500{% endif %}" 
+             style="width: {{ task.progress_pct }}%"></div>
+    </div>
+
+    {% if task.status == 'failed' %}
+        <p class="text-[10px] text-red-300/80 font-mono whitespace-pre-wrap max-h-20 overflow-y-auto bg-black/20 p-2.5 rounded-lg border border-red-500/10">Error Log: {{ task.error_log }}</p>
+    {% elif task.status == 'done' %}
+        <p class="text-[10px] text-green-400/80">Process finished successfully. Checklist updated.</p>
+    {% endif %}
+</div>

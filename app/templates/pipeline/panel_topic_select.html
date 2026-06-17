@@ -1,0 +1,54 @@
+<div class="space-y-6">
+    <!-- Step Header -->
+    <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+            <span class="text-[10px] text-gold-500 font-bold uppercase tracking-widest">Step 1</span>
+            <h3 class="text-xl font-bold text-white">Select Topic & Niche</h3>
+        </div>
+        <div>
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500">
+                <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Completed
+            </span>
+        </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="space-y-5">
+        <p class="text-sm text-slate-400 leading-relaxed">
+            Your project has been successfully initialized. Below are the base settings representing your target topic. You can edit them at any time in the Settings module.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 bg-[#0d121e]/40 border border-white/5 p-5 rounded-2xl">
+            <div class="space-y-1">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Video Project Title</span>
+                <span class="text-sm text-white font-bold">{{ project.title }}</span>
+            </div>
+            <div class="space-y-1">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Niche Category</span>
+                <span class="text-sm text-white font-semibold capitalize">{{ project.niche }}</span>
+            </div>
+            <div class="space-y-1 md:col-span-2 pt-2 border-t border-white/5">
+                <span class="text-[10px] text-slate-500 font-bold uppercase tracking-wider block">Research Topic Question</span>
+                <span class="text-sm text-slate-300 font-medium">{{ project.topic }}</span>
+            </div>
+        </div>
+
+        {% if project.notes %}
+        <div class="space-y-2">
+            <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Initial Project Notes</h4>
+            <div class="bg-white/[0.01] border border-white/5 p-4 rounded-xl text-xs text-slate-400 leading-relaxed whitespace-pre-wrap">
+                {{ project.notes }}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-between items-center pt-6 border-t border-white/5 mt-8">
+        <span class="text-xs text-slate-500">Initialized on {{ project.created_at.split(' ')[0] }}</span>
+        <button onclick="loadStepWorkspace('research')" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5">
+            Proceed to Research
+            <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+        </button>
+    </div>
+</div>

@@ -1,0 +1,96 @@
+<div class="space-y-6">
+    <!-- Step Header -->
+    <div class="flex items-center justify-between border-b border-white/5 pb-4">
+        <div>
+            <span class="text-[10px] text-gold-500 font-bold uppercase tracking-widest">Step 11</span>
+            <h3 class="text-xl font-bold text-white">Track Video Performance</h3>
+        </div>
+        <div>
+            {% if step.status == 'done' %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-500/10 text-green-500">
+                    <span class="h-1.5 w-1.5 rounded-full bg-green-500"></span> Metrics Synced
+                </span>
+            {% else %}
+                <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-800 text-slate-400">
+                    <span class="h-1.5 w-1.5 rounded-full bg-slate-500"></span> Awaiting Sync
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Step Work Area -->
+    <div class="space-y-6">
+        {% if not project.youtube_video_id %}
+        <!-- Publish check warning -->
+        <div class="border border-yellow-500/15 bg-yellow-500/5 p-5 rounded-2xl flex gap-3 text-sm text-slate-300">
+            <i data-lucide="alert-triangle" class="h-5 w-5 text-yellow-500 shrink-0 mt-0.5"></i>
+            <div>
+                <h4 class="font-bold text-white">Video Not Published</h4>
+                <p class="mt-1 leading-relaxed text-slate-400">You must publish this video (Step 10) before you can retrieve performance metrics from the platform.</p>
+            </div>
+        </div>
+        {% else %}
+
+        <!-- Sync Button -->
+        <div class="glass-card p-5 rounded-2xl bg-[#0d121e]/30 flex flex-col md:flex-row md:items-center justify-between gap-4 border border-white/5">
+            <div>
+                <h4 class="text-sm font-bold text-white">Sync YouTube Analytics Metrics</h4>
+                <p class="text-xs text-slate-400 mt-1">Queries the YouTube Analytics API to pull recent watch hours, views, and CTR.</p>
+            </div>
+            
+            <form hx-post="/projects/{{ project.id }}/steps/tracking/sync" 
+                  hx-target="#pipeline-steps-list">
+                <button type="submit" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1.5 whitespace-nowrap">
+                    <i data-lucide="refresh-cw" class="h-4 w-4 text-slate-900"></i>
+                    Sync Performance Now
+                </button>
+            </form>
+        </div>
+
+        <!-- Metric Link Cards -->
+        <div class="grid grid-cols-2 gap-4">
+            <a href="/analytics/videos/{{ project.id }}" class="glass-card p-5 rounded-xl border border-white/5 hover:border-gold-500/20 text-left block">
+                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Advanced Video Diagnostics</h5>
+                <p class="text-xs text-slate-500 mt-1">View the viewer retention curves, exact drop-off moments, likes, and watch time.</p>
+                <span class="text-xs text-gold-500 font-semibold mt-3 hover:underline inline-flex items-center gap-0.5">
+                    Open Retention Diagnostician <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                </span>
+            </a>
+            
+            <a href="/analytics" class="glass-card p-5 rounded-xl border border-white/5 hover:border-gold-500/20 text-left block">
+                <h5 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Channel Dashboard</h5>
+                <p class="text-xs text-slate-500 mt-1">Check consolidated revenue curves, subscribers growth metrics, and global stats.</p>
+                <span class="text-xs text-gold-500 font-semibold mt-3 hover:underline inline-flex items-center gap-0.5">
+                    Open Channel Analytics <i data-lucide="arrow-right" class="h-3.5 w-3.5"></i>
+                </span>
+            </a>
+        </div>
+
+        <!-- Prompt P-08 diagnostic box -->
+        <div class="border border-gold-500/10 bg-[#111726]/40 p-5 rounded-2xl space-y-3">
+            <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="refresh-ccw" class="h-4 w-4 text-gold-500"></i>
+                Performance Diagnosis & script improvement loop (P-08)
+            </h4>
+            <p class="text-xs text-slate-400 leading-relaxed">
+                If the video did not hit target parameters (e.g. CTR &lt; 5% or Retention &lt; 40%), you should copy the script improvement prompt to redesign script hooks or titles for future A/B tests.
+            </p>
+            <div class="pt-2">
+                <a href="/prompts" class="text-xs text-gold-500 hover:text-amber-400 font-semibold flex items-center gap-0.5">
+                    Load Prompt P-08 in Prompt Library <i data-lucide="external-link" class="h-3 w-3"></i>
+                </a>
+            </div>
+        </div>
+
+        {% endif %}
+    </div>
+
+    <!-- Actions Footer -->
+    <div class="flex justify-between items-center pt-6 border-t border-white/5 mt-8">
+        <span></span>
+        <a href="/dashboard" class="btn-gold px-5 py-2.5 rounded-xl text-xs flex items-center gap-1">
+            <i data-lucide="home" class="h-3.5 w-3.5 text-slate-900"></i>
+            Finish & Return to Hub
+        </a>
+    </div>
+</div>

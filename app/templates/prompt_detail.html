@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{{ prompt.name }} — Prompt Workspace{% endblock %}
+
+{% block content %}
+<div class="space-y-6">
+    <div class="flex items-center gap-2 text-sm text-slate-500">
+        <a href="/prompts" class="hover:text-white">Prompt Library</a>
+        <span>/</span>
+        <span class="text-slate-300">Prompt Workspace</span>
+    </div>
+
+    <!-- Workspace grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left: Variable form panel -->
+        <div class="space-y-6">
+            <div class="glass-card p-6 rounded-2xl border border-white/5 space-y-4">
+                <div>
+                    <span class="text-[10px] bg-slate-800 text-slate-400 font-bold uppercase tracking-wider px-2 py-0.5 rounded-md">
+                        {{ prompt.category | capitalize }}
+                    </span>
+                    <h3 class="text-lg font-bold text-white mt-2">{{ prompt.name }}</h3>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">{{ prompt.description }}</p>
+                </div>
+
+                <form hx-post="/prompts/{{ prompt.id }}/render" 
+                      hx-target="#render-output-container" 
+                      class="space-y-4 pt-4 border-t border-white/5">
+                    
+                    <h4 class="text-xs font-bold text-slate-300 uppercase tracking-wider">Template Variables</h4>
+                    
+                    {% if prompt.variables %}
+                    <div class="space-y-3.5">
+                        {% for var in prompt.variables %}
+                        <div class="flex flex-col gap-1.5">
+                            <label for="var-{{ var }}" class="text-xs text-slate-400 font-semibold font-mono">[{{ var }}]</label>
+                            <input type="text" id="var-{{ var }}" name="var_{{ var }}" required placeholder="Enter variable value..."
+                                   class="w-full bg-[#07090e] border border-white/5 rounded-xl px-4 py-2.5 text-xs text-white focus:outline-none focus:border-gold-500 transition-colors">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% else %}
+                    <p class="text-xs text-slate-500 italic">No variables declared in this template.</p>
+                    {% endif %}
+
+                    <button type="submit" class="btn-gold w-full py-3 rounded-xl text-xs flex items-center justify-center gap-1.5 font-bold mt-2">
+                        <i data-lucide="play" class="h-4 w-4 text-slate-900"></i>
+                        Render & Copy
+                    </button>
+                </form>
+            </div>
+            
+            <div class="flex justify-between items-center px-2">
+                <a href="/prompts/{{ prompt.id }}/edit" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 transition-colors">
+                    <i data-lucide="edit" class="h-3.5 w-3.5"></i> Edit Template
+                </a>
+            </div>
+        </div>
+
+        <!-- Right: Prompt template preview & output (Cols 2 & 3) -->
+        <div class="lg:col-span-2 space-y-6">
+            <!-- Template text viewer -->
+            <div class="glass-card p-6 rounded-2xl border border-white/5 space-y-3">
+                <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Base Template Structure</h4>
+                <pre class="text-xs text-slate-400 font-mono bg-black/20 p-4 rounded-xl border border-white/5 overflow-x-auto whitespace-pre-wrap max-h-60 scrollbar-thin select-all">{{ prompt.template_text }}</pre>
+            </div>
+
+            <!-- HTMX Render output box -->
+            <div id="render-output-container">
+                <!-- Swapped in on render form submission -->
+                <div class="p-8 text-center text-slate-500 border border-white/5 rounded-2xl bg-white/[0.01] space-y-2 py-16">
+                    <i data-lucide="terminal" class="h-10 w-10 mx-auto text-slate-700"></i>
+                    <p class="text-xs">Fill the variable parameters on the left and click "Render & Copy" to build your custom prompt.</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

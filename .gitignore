@@ -51,3 +51,9 @@ venv/
 env/
 __pycache__/
 *.pyc
+
+# SQLite and Project-specific runtime data
+data/
+projects/
+*.db
+

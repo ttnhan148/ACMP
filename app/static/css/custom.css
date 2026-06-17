@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --bg-main: #07090e;
+    --bg-card: rgba(13, 18, 30, 0.65);
+    --border-glow: rgba(245, 158, 11, 0.08);
+    --gold-primary: #e2b13c;
+    --gold-hover: #f59e0b;
+}
+
+/* Base resets & typography */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-main);
+    color: #e2e8f0;
+    background-image: 
+        radial-gradient(circle at 10% 10%, rgba(245, 158, 11, 0.03) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(59, 130, 246, 0.02) 0%, transparent 45%),
+        radial-gradient(circle at 50% 0%, rgba(245, 158, 11, 0.06) 0%, transparent 60%);
+    background-attachment: fixed;
+}
+
+h1, h2, h3, h4, h5, h6, .font-heading {
+    font-family: 'Outfit', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+/* Premium Custom Scrollbars */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+}
+
+*::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+*::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 9999px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gold-primary);
+}
+
+/* Glassmorphism card panel */
+.glass-card {
+    background: var(--bg-card);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.03);
+    box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-card:hover {
+    border-color: rgba(245, 158, 11, 0.12);
+    box-shadow: 0 15px 50px -15px rgba(245, 158, 11, 0.05);
+}
+
+/* Sidebar navigation buttons */
+.sidebar-link {
+    transition: all 0.2s ease-in-out;
+}
+.sidebar-link.active {
+    background: rgba(245, 158, 11, 0.08);
+    color: var(--gold-primary);
+    border-left: 3px solid var(--gold-primary);
+}
+.sidebar-link:not(.active):hover {
+    background: rgba(255, 255, 255, 0.02);
+    color: #ffffff;
+}
+
+/* Gilded button styles */
+.btn-gold {
+    background: linear-gradient(135deg, #e2b13c 0%, #f59e0b 100%);
+    color: #0d1117;
+    font-weight: 600;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 15px -3px rgba(245, 158, 11, 0.3);
+}
+
+.btn-gold:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px -4px rgba(245, 158, 11, 0.45);
+    filter: brightness(1.05);
+}
+
+.btn-gold:active {
+    transform: translateY(0);
+}
+
+/* Timeline step markers */
+.step-circle {
+    transition: all 0.3s ease;
+}
+.step-circle.done {
+    background: rgba(245, 158, 11, 0.15);
+    border-color: var(--gold-primary);
+    color: var(--gold-primary);
+}
+.step-circle.pending {
+    background: rgba(255, 255, 255, 0.02);
+    border-color: rgba(255, 255, 255, 0.08);
+    color: #64748b;
+}
+.step-circle.in_progress {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: #3b82f6;
+    color: #3b82f6;
+    box-shadow: 0 0 12px rgba(59, 130, 246, 0.3);
+}
+.step-circle.skipped {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #94a3b8;
+}
+
+/* Animations */
+@keyframes pulse-gold {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+.pulse-glow {
+    animation: pulse-gold 2s infinite ease-in-out;
+}
